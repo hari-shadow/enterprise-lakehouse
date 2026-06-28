@@ -1,6 +1,8 @@
 
 .env
 
+dataset/
+
 # Python
 __pycache__/
 *.pyc

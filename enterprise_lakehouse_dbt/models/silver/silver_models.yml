@@ -1,0 +1,54 @@
+version: 2
+
+models:
+  - name: silver_customer_info
+    columns:
+      - name: cst_id
+        tests:
+          - not_null
+          - unique
+      - name: cst_gender
+        tests:
+          - accepted_values:
+              values: ['Male', 'Female', 'n/a']
+      - name: cst_marital_status
+        tests:
+          - accepted_values:
+              values: ['Married', 'Single', 'n/a']
+
+  - name: silver_product_info
+    columns:
+      - name: prd_id
+        tests:
+          - not_null
+      - name: prd_cost
+        tests:
+          - not_null
+
+  - name: silver_sales_info
+    columns:
+      - name: sales_order_id
+        tests:
+          - not_null
+      - name: sales_qty
+        tests:
+          - not_null
+
+  - name: silver_erp_cust_az12
+    columns:
+      - name: cst_id
+        tests:
+          - not_null
+
+  - name: silver_erp_loc_a101
+    columns:
+      - name: cid
+        tests:
+          - not_null
+
+  - name: silver_erp_px_cat_g1v2
+    columns:
+      - name: id
+        tests:
+          - not_null
+          - unique

@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: bronze
+    catalog: enterprise_lakehouse
+    schema: bronze
+    tables:
+      - name: customer_info
+      - name: product_info
+      - name: sales_info
+      - name: erp_cust_az12
+      - name: erp_loc_a101
+      - name: erp_px_cat_g1v2

@@ -15,7 +15,7 @@ source as (
     select s.*
     from {{ source('bronze', 'customer_info') }} s
     cross join max_ts
-    where s.cst_id is not null
+    where s.cst_id is not null and s.cst_id != ''
     and s._airbyte_extracted_at > max_ts.value
 ),
 
@@ -28,7 +28,7 @@ deduplicated as (
 
 cleaned as (
     select
-        cst_id,
+        try_cast(cst_id as bigint)                                  as cst_id,
         cst_key,
         trim(cst_firstname)                                         as cst_firstname,
         trim(cst_lastname)                                          as cst_lastname,

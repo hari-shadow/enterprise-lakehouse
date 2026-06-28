@@ -23,7 +23,7 @@ cleaned as (
     select
         sls_ord_num                                                         as sales_order_id,
         sls_prd_key                                                         as sales_prd_key,
-        try_cast(sls_cust_id as bigint)                                         as sales_cst_id,
+        try_cast(sls_cust_id as bigint)                                     as sales_cst_id,
         case
             when try_cast(sls_order_dt as bigint) <= 0
               or len(try_cast(sls_order_dt as string)) < 8 then null

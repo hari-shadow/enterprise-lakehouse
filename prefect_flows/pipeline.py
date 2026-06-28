@@ -18,18 +18,33 @@ def get_variable(name: str) -> str:
     return Variable.get(name)
 
 
+def get_airbyte_token() -> str:
+    client_id = get_secret("airbyte-client-id")
+    client_secret = get_secret("airbyte-client-secret")
+
+    response = requests.post(
+        "https://api.airbyte.com/v1/applications/token",
+        json={
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "grant_type": "client_credentials"
+        }
+    )
+    response.raise_for_status()
+    return response.json()["access_token"]
+
+
 @task
 def sync_airbyte(connection_id: str, name: str):
     logger = get_run_logger()
     logger.info(f"Starting Airbyte sync: {name}")
 
-    api_key = get_secret("airbyte-api-key")
+    token = get_airbyte_token()
     headers = {
-        "Authorization": f"Bearer {api_key}",
+        "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
     }
 
-    # Trigger sync
     response = requests.post(
         "https://api.airbyte.com/v1/jobs",
         headers=headers,
@@ -39,7 +54,6 @@ def sync_airbyte(connection_id: str, name: str):
     job_id = response.json()["jobId"]
     logger.info(f"Sync triggered — job ID: {job_id}")
 
-    # Poll until complete
     while True:
         status_response = requests.get(
             f"https://api.airbyte.com/v1/jobs/{job_id}",
@@ -89,13 +103,11 @@ def pipeline():
     crm_id = get_secret("airbyte-crm-connection-id")
     erp_id = get_secret("airbyte-erp-connection-id")
 
-    # Step 1 — Sync both sources in parallel
     crm = sync_airbyte.submit(crm_id, "CRM")
     erp = sync_airbyte.submit(erp_id, "ERP")
     crm.result()
     erp.result()
 
-    # Step 2 — Transform
     run_dbt("run --select silver")
     run_dbt("run --select gold")
     run_dbt("snapshot")

@@ -19,3 +19,8 @@ LIMIT 5;
 SELECT * FROM enterprise_lakehouse.gold.fact_orders 
 WHERE order_date IS NOT NULL
 LIMIT 5;
+
+SELECT customer_id, customer_fullname, customer_country, 
+       dbt_valid_from, dbt_valid_to
+FROM enterprise_lakehouse.gold.dim_customers_snapshot
+LIMIT 5;

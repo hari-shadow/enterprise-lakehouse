@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: dim_customers
+    columns:
+      - name: customer_key
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+      - name: customer_fullname
+        tests:
+          - not_null
+
+  - name: dim_products
+    columns:
+      - name: product_key
+        tests:
+          - not_null
+          - unique
+      - name: product_id
+        tests:
+          - not_null
+
+  - name: fact_orders
+    columns:
+      - name: order_key
+        tests:
+          - not_null
+          - unique
+      - name: order_id
+        tests:
+          - not_null
+      - name: customer_key
+        tests:
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_key
+      - name: product_key
+        tests:
+          - relationships:
+              to: ref('dim_products')
+              field: product_key

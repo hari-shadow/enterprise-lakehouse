@@ -1,0 +1,23 @@
+name: enterprise-lakehouse-pipeline
+prefect-version: 3.0.0
+
+build: null
+
+push: null
+
+pull:
+  - prefect.deployments.steps.git_clone:
+      repository: https://github.com/hari-shadow/enterprise-lakehouse.git
+      branch: main
+
+deployments:
+  - name: enterprise-lakehouse-deployment
+    version: 1.0.0
+    tags: ["production"]
+    description: "Full medallion pipeline: Airbyte sync + dbt silver + gold + snapshot + tests"
+    schedule:
+      cron: "0 6 * * *"
+      timezone: "Asia/Kolkata"
+    entrypoint: prefect_flows/pipeline.py:pipeline
+    work_pool:
+      name: enterprise-lakehouse-pool
